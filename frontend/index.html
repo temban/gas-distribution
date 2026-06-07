@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gas Distribution System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Splash Screen -->
+    <div id="splash-screen" class="screen">
+        <div class="splash-content">
+            <div class="logo-emoji">🧡</div>
+            <h1 class="splash-title">Gas Distribution</h1>
+            <p class="splash-subtitle">Find your nearest gas station...</p>
+        </div>
+    </div>
+
+    <!-- Station Browser -->
+    <div id="browser-screen" class="screen hidden">
+        <header>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span class="logo-emoji-small">🧡</span>
+                <h1>Gas Distribution</h1>
+            </div>
+            <div class="auth-buttons">
+                <button class="header-btn" onclick="showLoginModal()">Staff Login</button>
+            </div>
+        </header>
+        <main>
+            <div class="city-section">
+                <h2>Yaounde</h2>
+                <div id="yaounde-stations" class="station-grid"></div>
+            </div>
+            <div class="city-section">
+                <h2>Douala</h2>
+                <div id="douala-stations" class="station-grid"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Station Detail & Order Form -->
+    <div id="detail-screen" class="screen hidden">
+        <header>
+            <button class="header-btn" onclick="showScreen('browser-screen')">← Back</button>
+            <h1 id="detail-station-name">Station Name</h1>
+            <div style="width: 60px;"></div> <!-- spacer -->
+        </header>
+        <main class="detail-layout">
+            <div class="station-info-card">
+                <h3>Station Information</h3>
+                <p id="detail-station-address">Address: ...</p>
+                <p id="detail-station-phone">Phone: ...</p>
+                
+                <h3>Available Cylinders</h3>
+                <table class="cylinder-table">
+                    <thead>
+                        <tr>
+                            <th>Size (kg)</th>
+                            <th>Stock</th>
+                            <th>Price (CFA)</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cylinder-list">
+                        <!-- Dynamic rows -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="order-form-container" class="order-form-card hidden">
+                <h3>Place Order</h3>
+                <form id="order-form" onsubmit="submitOrder(event)">
+                    <input type="hidden" id="order-station-id">
+                    <input type="hidden" id="order-cylinder-id">
+                    <input type="hidden" id="order-price">
+                    
+                    <div class="form-group">
+                        <label>Full Name *</label>
+                        <input type="text" id="customer-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number *</label>
+                        <input type="tel" id="customer-phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Town / City</label>
+                        <input type="text" id="customer-town">
+                    </div>
+                    <div class="form-group">
+                        <label>Quarter / Neighborhood</label>
+                        <input type="text" id="customer-quarter">
+                    </div>
+                    <div class="form-group">
+                        <label>Address</label>
+                        <input type="text" id="customer-address">
+                    </div>
+                    <div class="form-group">
+                        <label>Quantity *</label>
+                        <input type="number" id="order-quantity" min="1" value="1" required onchange="updateTotal()">
+                    </div>
+                    <div class="form-group">
+                        <label>Payment Method *</label>
+                        <select id="payment-method" required>
+                            <option value="cash">Cash</option>
+                            <option value="mtn_momo">MTN MoMo</option>
+                            <option value="orange_money">Orange Money</option>
+                        </select>
+                    </div>
+                    
+                    <div class="total-display">
+                        Total: <span id="order-total">0</span> CFA
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Place Order</button>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2>🎉 Order Placed Successfully!</h2>
+            <p>Your order has been sent to the station.</p>
+            <div class="validation-code-box">
+                <p>Your Validation Code</p>
+                <h1 id="customer-validation-code">----</h1>
+            </div>
+            <p style="font-size: 0.9rem; color: #d9534f; margin-top: 10px;">Keep this code safe. You will need to provide it to the delivery person to receive your gas.</p>
+            <button onclick="closeModal()" class="submit-btn" style="margin-top: 15px;">Continue</button>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2>Staff Login</h2>
+            <form id="login-form" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <input type="text" id="login-username" placeholder="Username" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="login-password" placeholder="Password" required>
+                </div>
+                <button type="submit" class="submit-btn">Login</button>
+                <button type="button" class="btn-secondary" onclick="closeLoginModal()" style="margin-top:10px; width:100%">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="admin-screen" class="screen hidden">
+        <header>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span class="logo-emoji-small">🛡️</span>
+                <h1>Admin Dashboard</h1>
+            </div>
+            <button class="header-btn" onclick="logout()">Logout</button>
+        </header>
+        <main>
+            <div class="dashboard-card">
+                <h2>All Orders</h2>
+                <div class="table-responsive">
+                    <table class="cylinder-table" id="admin-orders-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Customer</th>
+                                <th>Station</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Delivery Dashboard -->
+    <div id="delivery-screen" class="screen hidden">
+        <header>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span class="logo-emoji-small">🚚</span>
+                <h1>Delivery Dashboard</h1>
+            </div>
+            <button class="header-btn" onclick="logout()">Logout</button>
+        </header>
+        <main>
+            <div class="dashboard-card">
+                <h2>My Deliveries</h2>
+                <div class="table-responsive">
+                    <table class="cylinder-table" id="delivery-orders-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Customer</th>
+                                <th>Address</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Delivery Code Modal -->
+    <div id="delivery-code-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2>Complete Delivery</h2>
+            <p>Enter the customer's validation code to mark this delivery as complete and payment received.</p>
+            <form id="complete-delivery-form" onsubmit="handleCompleteDelivery(event)">
+                <input type="hidden" id="delivery-order-id">
+                <div class="form-group">
+                    <input type="text" id="delivery-validation-code" placeholder="4-digit code" required maxlength="4" style="font-size: 1.5rem; text-align: center; letter-spacing: 5px;">
+                </div>
+                <button type="submit" class="submit-btn">Complete Delivery</button>
+                <button type="button" class="btn-secondary" onclick="closeDeliveryCodeModal()" style="margin-top:10px; width:100%">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
