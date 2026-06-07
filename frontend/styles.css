@@ -49,8 +49,12 @@ body {
     text-align: center;
 }
 
-.logo-emoji {
-    font-size: 80px;
+.logo-img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 50%;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
     animation: scaleIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
@@ -166,8 +170,12 @@ main {
     background: #f0f0f0;
 }
 
-.logo-emoji-small {
-    font-size: 1.5rem;
+.logo-img-small {
+    width: 32px;
+    height: 32px;
+    object-fit: cover;
+    border-radius: 50%;
+    background-color: white; /* helps if the image has transparent areas but mostly for aesthetics */
 }
 
 .dashboard-card {
