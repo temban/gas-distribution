@@ -40,7 +40,7 @@ async function loadStations() {
             
             card.innerHTML = `
                 <div class="station-card-header">
-                    <span style="font-size: 1.5rem">⛽</span>
+                    <img src="images/gas_cylinder.jpg" alt="Gas Station" class="logo-img-small" style="width: 24px; height: 24px;">
                     <h3>${station.name}</h3>
                 </div>
                 <div class="station-card-body">
